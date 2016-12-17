@@ -1,23 +1,8 @@
+from square import *
 import pieces
 import pdb
 
 BOARDSIZE = 8
-
-class Square(object):
-    def __init__(self, rank, file):
-        self.rank = rank
-        self.file = file
-
-    def __eq__(self, other):
-        return self.rank == other.rank and self.file == other.file
-
-    def __repr__(self):
-        filemap = "ABCDEFGH"
-        return filemap[self.file] + str(self.rank+1)
-
-    def __hash__(self):
-        return hash((self.rank, self.file))
-
 
 class Board(object):
     def __init__(self):
@@ -62,12 +47,15 @@ class Board(object):
 
         return squares
 
-    def move(self, loc, other):
+    def move(self, loc, other, special=None):
+        if special is None:
+            special = []
         p = self.squares[loc]
+        possible_destinations = p.get_squares() + special
         if not p:
             raise ValueError("No piece found on square")
         else:
-            if other in p.get_squares():
+            if other in possible_destinations:
                 self.squares[loc] = None
                 self.squares[other] = p
                 p.loc = other
@@ -78,12 +66,9 @@ class Board(object):
         if validate([sq]):
             piece = self.squares[sq]
             if piece:
-                if color:
+                if color is not None:
                     return piece.white == color
                 else:
                     return True
         return False
 
-def validate(squares):
-    return [square for square in squares 
-            if 0 <= square.rank < BOARDSIZE and 0 <=square.file < BOARDSIZE]

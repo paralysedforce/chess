@@ -1,5 +1,4 @@
-from board import validate, Square
-import pdb
+from square import Square, validate
 
 class Piece(object):
     def __init__(self, game_board, start, isWhite):
@@ -33,7 +32,6 @@ class Pawn(Piece):
 
         if (self.white and self.loc.rank == 1) or \
             (not self.white and self.loc.rank == 6):
-                pdb.set_trace()
                 double_forward = Square(self.loc.rank + 2 * direction,
                         self.loc.file)
                 if not self.board.exists_piece(double_forward):
@@ -63,23 +61,23 @@ class Knight(Piece):
 
 class Bishop(Piece):
     def get_squares(self):
-        flags = [True] * 4
         directions = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
         squares = []
 
         for i in range(1, 8):
-            for j in range(len(flags)):
-                flag, direction = flags[j], directions[j]
+            for j in range(len(directions)):
+                flag = True
+                direction = directions[j]
                 right, up = direction
                 if flag:
                     next_square = Square(self.loc.rank + i*up, 
                                          self.loc.file + i*right)
 
                     if self.board.exists_piece(next_square, color=self.white):
-                        flags[j] = False
+                        flag = False
                     elif self.board.exists_piece(next_square, color=self.other):
                         squares.append(next_square)
-                        flags[j] = False
+                        flag = False
                     else:
                         squares.append(next_square)
 
